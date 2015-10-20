@@ -17,48 +17,54 @@
 </div>
 <script type="text/javascript" src="../src/validator.js"></script>
 <script type="text/javascript">
+
 var person = {
-      name: 'Peter',
-      phone: '12345678900',
-      email: 'peter@example.com',
+      name: 'xxxx',
+      phone: '15521286598x',
+      email: 'peterexample.com',
       age: 24,
       gendar: 'male',
       hobbies: ['coding', 'singing', 'movies'],
       studentId: 'X2345678',
       contact: '',
-      smilie: '{doge}',
+      smilie: '{doge}'
     },
     rules = {
-      name:'required|string',
-      phone: 'string|size:11',
-      email: 'required_without:phone|email',
-      gendar: 'in:male,female',
-      age: 'integer|between:0,120|older_than:17',
-      hobbies: 'array',
-      studentId: 'alpha_num|size:8',
-      contact: 'required_without:phone,email',
-      smilie: 'regex:^{([a-z]*)}$',
+      name:{rule:'max:3',error:'验证错误22'},
+      phone:{rule:'phone',error:'手机号码错误'},
+      email:{rule:'required_without:phone|email'},
+      gendar:{rule:'in:male,female'},
+      age:{rule:'integer|between:0,120|older_than:17'},
+      hobbies:{rule:'array'},
+      studentId:{rule:'alpha_num|size:8'},
+      contact:{rule:'required_without:phone,email'},
+      smilie:{rule:'regex:^{([a-z]*)}$'}
     };
 
 Validator.add('older_than', function (object, value, age) {
   return value > age;
 });
+var ss=Validator.validate(person,rules);
 
-document.getElementById('testOrigin').innerHTML = 'Object to be tested:<br>' + JSON.stringify(person) + '<br>';
-document.getElementById('testRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rules) + '<br>';
-document.getElementById('testResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(person, rules));
 
-var validateFiles = function (files) {
-  var rule = {
-        files: 'required|min:1024|max:2048'
-      },
-      fileObj = {
-        files: files
-      };
-  document.getElementById('fileOrigin').innerHTML = 'Files to be tested:<br>' + JSON.stringify(fileObj) + '<br>';
-  document.getElementById('fileRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rule) + '<br>';
-  document.getElementById('fileResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(fileObj, rule));
-};
+
+alert(rules[ss.rejects[0].field].error);
+//Validator.setConfig({resumeOnFailed:true});
+//document.getElementById('testOrigin').innerHTML = 'Object to be tested:<br>' + JSON.stringify(person) + '<br>';
+//document.getElementById('testRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rules) + '<br>';
+//document.getElementById('testResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(person, rules));
+//
+//var validateFiles = function (files) {
+//  var rule = {
+//        files: 'required|min:1024|max:2048'
+//      },
+//      fileObj = {
+//        files: files
+//      };
+//  document.getElementById('fileOrigin').innerHTML = 'Files to be tested:<br>' + JSON.stringify(fileObj) + '<br>';
+//  document.getElementById('fileRules').innerHTML = 'Validation rules:<br>' + JSON.stringify(rule) + '<br>';
+//  document.getElementById('fileResult').innerHTML = 'Result:<br>' + JSON.stringify(Validator.validate(fileObj, rule));
+//};
 </script>
 </body>
 </html>

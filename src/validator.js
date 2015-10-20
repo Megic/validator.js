@@ -10,7 +10,7 @@
   // Validator singleton
   var Validator = function () {
     this.config = {
-      resumeOnFailed: false,
+      resumeOnFailed: false
     };
   };
   var instance = instance ? instance : new Validator,
@@ -79,7 +79,7 @@
     // Trim string
     trim: function (str) {
       return str.replace(/(^\s*)|(\s*$)/g, '');
-    },
+    }
 
   };
 
@@ -162,7 +162,7 @@
           return true;
       }
       return this.requires.required(field);
-    },
+    }
 
   };
 
@@ -216,9 +216,10 @@
       var res = false;
       min = Number(min);
       max = Number(max);
+
       switch(Utils.typeof(value)) {
         case 'string':
-          res = (value.localeCompare(min) >= 0) && (value.localeCompare(max) <= 0);
+          res = (value.length >= min) && (value.length <= max);
           break;
         case 'number':
           res = (value >= min) && (value <= max);
@@ -251,7 +252,37 @@
     'date': function (object, value) {
       return !isNaN(Date.parse(value));
     },
-
+    //验证是否是手机号码
+    'phone': function (object, phone) {
+      var phoneOne = {
+        //中国移动
+        cm: /^(?:0?1)((?:3[56789]|5[0124789]|8[278])\d|34[0-8]|47\d)\d{7}$/,
+        //中国联通
+        cu: /^(?:0?1)(?:3[012]|4[5]|5[356]|8[356]\d|349)\d{7}$/,
+        //中国电信
+        ce: /^(?:0?1)(?:33|53|8[079])\d{8}$/,
+        //中国大陆
+        cn: /^(?:0?1)[3458]\d{9}$/
+        //中国香港
+        //   hk: /^(?:0?[1569])(?:\d{7}|\d{8}|\d{12})$/,
+        //澳门
+        // macao: /^6\d{7}$/,
+        //台湾
+        //  tw: /^(?:0?[679])(?:\d{7}|\d{8}|\d{10})$//*,
+        //韩国
+        //  kr:/^(?:0?[17])(?:\d{9}|\d{8})$/,
+        //日本
+        // jp:/^(?:0?[789])(?:\d{9}|\d{8})$/*/
+      };
+      var ok=0;
+      for (var i in phoneOne) {
+        if (phoneOne[i].test(phone)) {
+          ok = 1;
+          break
+        }
+      }
+      return ok;
+    },
     // date_format:format
     // The field under validation must match the format defined according to the Utils.dateFormat function.
     'date_format': function (object, value, format) {
@@ -310,9 +341,10 @@
     'max': function (object, value, max) {
       var res = false;
       max = Number(max);
+
       switch(Utils.typeof(value)) {
         case 'string':
-          res = value.localeCompare(max) <= 0;
+          res = value.length <= max;
           break;
         case 'number':
           res = value <= max;
@@ -359,7 +391,7 @@
       min = Number(min);
       switch(Utils.typeof(value)) {
         case 'string':
-          res = value.localeCompare(min) >= 0;
+          res = value.length >= min;
           break;
         case 'number':
           res = value >= min;
@@ -512,7 +544,7 @@
   // Breakdown validation rules and run tests.
   var validate = function (object, _rules) {
     for(var field in _rules) {
-      var ruleValue = _rules[field],
+      var ruleValue = _rules[field].rule,
           rules;
       if(Utils.typeof(ruleValue) === 'object' && field in object) {
         if(validate.apply(this, [object[field], _rules[field]]) || this.config.resumeOnFailed)
@@ -529,14 +561,16 @@
 
         if(!run(object, this.requires, rules[i], field) ||
           (field in object && !run(object, this.validators, rules[i], object[field]))) {
-          rejects.push({ object: object, field: field, rule: key });
+          rejects.push({
+            //object: object,
+            field: field, rule: key });
           if(!this.config.resumeOnFailed)
             return false;
         }
       }
     }
     return true;
-  }
+  };
 
   Validator.prototype.validate = function(object, rules) {
     if(Utils.typeof(object) === 'string') {
@@ -544,7 +578,7 @@
         object = JSON.parse(object);
       } catch (e) {
         return {
-          status: 'failed',
+          status: 0,
           rejects: [{object: 'Invalid JSON string!'}]
         };
       }
@@ -552,7 +586,7 @@
     rejects = [];
     validate.apply(this, [object, rules]);
     return {
-      status: !rejects.length ? 'success' : 'failed',
+      status: !rejects.length ? 1 : 0,
       rejects: rejects
     };
   };

@@ -19,8 +19,8 @@
 <script type="text/javascript">
 
 var person = {
-      name: 'xxxx',
-      phone: '15521286598x',
+      name: '       ',
+      phone: '',
       email: 'peterexample.com',
       age: 24,
       gendar: 'male',
@@ -30,15 +30,9 @@ var person = {
       smilie: '{doge}'
     },
     rules = {
-      name:{rule:'max:3',error:'验证错误22'},
+      name:{rule:'max:10',error:'验证错误22'},
       phone:{rule:'phone',error:'手机号码错误'},
-      email:{rule:'required_without:phone|email'},
-      gendar:{rule:'in:male,female'},
-      age:{rule:'integer|between:0,120|older_than:17'},
-      hobbies:{rule:'array'},
-      studentId:{rule:'alpha_num|size:8'},
-      contact:{rule:'required_without:phone,email'},
-      smilie:{rule:'regex:^{([a-z]*)}$'}
+      email:{rule:'email',error:'xxx'}
     };
 
 Validator.add('older_than', function (object, value, age) {
